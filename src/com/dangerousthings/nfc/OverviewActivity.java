@@ -2,6 +2,7 @@ package com.dangerousthings.nfc;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -19,6 +20,9 @@ public class OverviewActivity extends Activity
     byte[] mPage03 = null;
     byte[] mPageE2 = null;
     byte[] mPageE3 = null;
+
+    final byte[] blankLockBytes = new byte[] { 0x00, 0x00 };
+    final byte[] properLockBytes = new byte[] { 0x0F, 0x00 };
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -40,6 +44,22 @@ public class OverviewActivity extends Activity
         if (mPageE3 == null) mPageE3 = Arrays.copyOfRange(mAllPages, 4*0xE3, 4*0xE3+4);
 
         ((TextView) findViewById(R.id.uid)).setText(HexUtils.bytesToHex(mUID));
+
+        if (mPage02 != null) {
+            TextView staticLockMessage = (TextView) findViewById(R.id.static_lock_message);
+            staticLockMessage.setTextColor(Color.WHITE);
+            byte[] lockBytes = Arrays.copyOfRange(mPage02, 2, 4);
+            if (Arrays.equals(lockBytes, blankLockBytes)) {
+                staticLockMessage.setText("Lock Bytes Not Set!");
+                staticLockMessage.setBackgroundColor(Color.RED);
+            } else if (Arrays.equals(lockBytes, properLockBytes)) {
+                staticLockMessage.setText("Lock Bytes Set!");
+                staticLockMessage.setBackgroundColor(Color.GREEN);
+            } else {
+                staticLockMessage.setText("Weird Lock Bytes!");
+                staticLockMessage.setBackgroundColor(Color.BLUE);
+            }
+        }
     }
 
     private void showAlert(String message) {
