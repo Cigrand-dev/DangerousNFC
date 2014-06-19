@@ -73,8 +73,11 @@ public class OverviewActivity extends Activity
             } else if (Arrays.equals(mPage03, properCCBytes)) {
                 ccMessage.setText("Capability Container Formatted Properly!");
                 ccMessage.setBackgroundColor(Color.GREEN);
+            } else if (OTPUtils.isWritePossible(mPage03, properCCBytes)){
+                ccMessage.setText("Capability Container Formatted Strangely:" + "\n" + "OTP Format is Possible");
+                ccMessage.setBackgroundColor(Color.BLUE);
             } else {
-                ccMessage.setText("Capability Container Formatted Strangely!");
+                ccMessage.setText("Capability Container Formatted Strangely:" + "\n" + "OTP Format is not Possible");
                 ccMessage.setBackgroundColor(Color.BLUE);
             }
         }

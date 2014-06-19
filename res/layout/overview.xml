@@ -16,5 +16,6 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@id/static_lock_message"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:gravity="center"/>
 </RelativeLayout>
