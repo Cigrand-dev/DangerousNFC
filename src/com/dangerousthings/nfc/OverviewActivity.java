@@ -24,6 +24,9 @@ public class OverviewActivity extends Activity
     final byte[] blankLockBytes = new byte[] { 0x00, 0x00 };
     final byte[] properLockBytes = new byte[] { 0x0F, 0x00 };
 
+    final byte[] blankCCBytes = new byte[] { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+    final byte[] properCCBytes = new byte[] { (byte) 0xE1, (byte) 0x10, (byte) 0x6D, (byte) 0x00 };
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -58,6 +61,21 @@ public class OverviewActivity extends Activity
             } else {
                 staticLockMessage.setText("Weird Lock Bytes!");
                 staticLockMessage.setBackgroundColor(Color.BLUE);
+            }
+        }
+
+        if (mPage03 != null) {
+            TextView ccMessage = (TextView) findViewById(R.id.cc_message);
+            ccMessage.setTextColor(Color.WHITE);
+            if (Arrays.equals(mPage03, blankCCBytes)) {
+                ccMessage.setText("Capability Container Blank!");
+                ccMessage.setBackgroundColor(Color.RED);
+            } else if (Arrays.equals(mPage03, properCCBytes)) {
+                ccMessage.setText("Capability Container Formatted Properly!");
+                ccMessage.setBackgroundColor(Color.GREEN);
+            } else {
+                ccMessage.setText("Capability Container Formatted Strangely!");
+                ccMessage.setBackgroundColor(Color.BLUE);
             }
         }
     }
