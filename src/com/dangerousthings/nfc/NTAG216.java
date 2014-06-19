@@ -17,6 +17,8 @@ public class NTAG216
     private static final byte FAST_READ = 0x3A;
     private static final byte GET_VERSION = 0x60;
 
+    private static final byte[] INVALID_ARGUMENT = new byte[] { 0x00 };
+
     final NfcA mTag;
 
     public NTAG216(Tag tag) throws BadUIDLength, WrongTagTechnologies {
@@ -49,7 +51,7 @@ public class NTAG216
 
     public byte[] fastRead(byte startAddr, byte endAddr) throws IOException, NotAuthenticated {
         byte[] response = transceive(new byte[] { FAST_READ, startAddr, endAddr });
-        if (response == null) throw new NotAuthenticated();
+        if (Arrays.equals(response, INVALID_ARGUMENT)) throw new NotAuthenticated();
         return response;
     }
 
