@@ -13,7 +13,7 @@ public class xNT extends NTAG216
 
     private static final byte[] NTAG216_VERSION = { 0x00, 0x04, 0x04, 0x02, 0x01, 0x00, 0x13, 0x03 };
 
-    public xNT(Tag tag) throws WrongTagTechnologies {
+    public xNT(Tag tag) throws BadUIDLength, WrongTagTechnologies {
         super(tag);
     }
 

@@ -82,6 +82,8 @@ public class ScanActivity extends Activity implements PasswordFragment.OnPasswor
                     requestPassword();
                 }
             }
+        } catch (xNT.BadUIDLength e) {
+            showAlert("Tag Not Supported");
         } catch (xNT.WrongTagTechnologies e) {
             showAlert("Tag Not Supported");
         } catch (xNT.BadTagVersion e) {

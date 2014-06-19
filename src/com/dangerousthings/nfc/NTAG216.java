@@ -8,6 +8,7 @@ import java.util.Arrays;
 
 public class NTAG216
 {
+    public class BadUIDLength extends Exception {};
     public class WrongTagTechnologies extends Exception {};
     public class NotAuthenticated extends Exception {};
 
@@ -18,7 +19,8 @@ public class NTAG216
 
     final NfcA mTag;
 
-    public NTAG216(Tag tag) throws WrongTagTechnologies {
+    public NTAG216(Tag tag) throws BadUIDLength, WrongTagTechnologies {
+        if (tag.getId().length != 7) throw new BadUIDLength();
         if (!Arrays.asList(tag.getTechList()).contains("NfcA")) {
             mTag = NfcA.get(tag);
         } else throw new WrongTagTechnologies();
