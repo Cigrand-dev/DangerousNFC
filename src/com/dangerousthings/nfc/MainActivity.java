@@ -13,7 +13,7 @@ import android.app.AlertDialog;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class ScanActivity extends Activity implements PasswordFragment.OnPasswordListener
+public class MainActivity extends Activity implements PasswordFragment.OnPasswordListener
 {
     public final static String UID = "com.dangerousthings.nfc.UID";
     public final static String PASSWORD = "com.dangerousthings.nfc.PASSWORD";
@@ -37,7 +37,7 @@ public class ScanActivity extends Activity implements PasswordFragment.OnPasswor
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.scan);
+        setContentView(R.layout.main);
     }
 
     @Override
