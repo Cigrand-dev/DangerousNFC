@@ -118,10 +118,6 @@ public final class Tag implements Parcelable {
 
     int mConnectedTechnology;
 
-    /**
-     * Hidden constructor to be used by NFC service and internal classes.
-     * @hide
-     */
     public Tag(byte[] id, int[] techList, Bundle[] techListExtras, int serviceHandle,
             INfcTag tagService) {
         if (techList == null) {

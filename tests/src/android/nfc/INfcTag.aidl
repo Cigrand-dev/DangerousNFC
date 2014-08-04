@@ -20,9 +20,6 @@ import android.nfc.NdefMessage;
 import android.nfc.Tag;
 import android.nfc.TransceiveResult;
 
-/**
- * @hide
- */
 interface INfcTag
 {
     int close(int nativeHandle);
