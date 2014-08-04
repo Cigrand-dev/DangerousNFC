@@ -15,26 +15,16 @@ import java.util.Arrays;
 
 public class MainActivity extends Activity implements PasswordFragment.OnPasswordListener
 {
-    xNT mTag;
-
-    byte[] mUID = null;
     byte[] mPassword = null;
-    byte[] mAllPages = null;
-    byte[] mPage02 = null;
-    byte[] mPage03 = null;
-    byte[] mPageE2 = null;
-    byte[] mPageE3 = null;
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
 
         PendingIntent intent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
@@ -44,40 +34,23 @@ public class MainActivity extends Activity implements PasswordFragment.OnPasswor
     public void onNewIntent(Intent intent) {
         Tag intentTag = (Tag) intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
-        if (!Arrays.equals(mUID, intentTag.getId())) {
-            mUID = intentTag.getId();
-            mPassword = null;
-            mAllPages = null;
-            mPage02 = null; mPage03 = null; mPageE2 = null; mPageE3 = null;
-        }
-
         try {
-            mTag = new xNT(intentTag);
-            mTag.connect();
-            mTag.checkVersion();
+            xNT tag = new xNT(intentTag);
+            tag.connect();
+            tag.checkVersion();
 
-            if (mPassword != null) {
-                mTag.authenticate(mPassword);
-            }
-
-            try {
-                mAllPages = mTag.readAllPages();
-            } catch (xNT.NotAuthenticated eFast) {
-                try {
-                    mPage02 = mTag.read((byte) 0x02);
-                    mPage03 = mTag.read((byte) 0x03);
-                    mPageE2 = mTag.read((byte) 0xE2);
-                    mPageE3 = mTag.read((byte) 0xE3);
-                } catch (xNT.NotAuthenticated ePiecemeal) {
-                    requestPassword();
-                }
-            }
+            byte[] page02 = tag.read((byte) 0x02);
+            byte[] page03 = tag.read((byte) 0x03);
+            byte[] pageE2 = tag.read((byte) 0xE2);
+            byte[] pageE3 = tag.read((byte) 0xE3);
         } catch (xNT.BadUIDLength e) {
-            showAlert("Tag Not Supported");
+            showAlert("Error: Tag Not Supported");
         } catch (xNT.WrongTagTechnologies e) {
-            showAlert("Tag Not Supported");
+            showAlert("Error: Tag Not Supported");
         } catch (xNT.BadTagVersion e) {
-            showAlert("Tag Not Supported");
+            showAlert("Error: Tag Not Supported");
+        } catch (xNT.NotAuthenticated e) {
+            showAlert("Error: Password Already Set");
         } catch (IOException e) {
             showAlert(e.getMessage());
         }
