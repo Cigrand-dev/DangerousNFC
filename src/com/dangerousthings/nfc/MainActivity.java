@@ -15,14 +15,6 @@ import java.util.Arrays;
 
 public class MainActivity extends Activity implements PasswordFragment.OnPasswordListener
 {
-    public final static String UID = "com.dangerousthings.nfc.UID";
-    public final static String PASSWORD = "com.dangerousthings.nfc.PASSWORD";
-    public final static String ALL_PAGES = "com.dangerousthings.nfc.ALL_PAGES";
-    public final static String PAGE_02 = "com.dangerousthings.nfc.PAGE_02";
-    public final static String PAGE_03 = "com.dangerousthings.nfc.PAGE_03";
-    public final static String PAGE_E2 = "com.dangerousthings.nfc.PAGE_E2";
-    public final static String PAGE_E3 = "com.dangerousthings.nfc.PAGE_E3";
-
     xNT mTag;
 
     byte[] mUID = null;
@@ -70,14 +62,12 @@ public class MainActivity extends Activity implements PasswordFragment.OnPasswor
 
             try {
                 mAllPages = mTag.readAllPages();
-                launchOverview();
             } catch (xNT.NotAuthenticated eFast) {
                 try {
                     mPage02 = mTag.read((byte) 0x02);
                     mPage03 = mTag.read((byte) 0x03);
                     mPageE2 = mTag.read((byte) 0xE2);
                     mPageE3 = mTag.read((byte) 0xE3);
-                    launchOverview();
                 } catch (xNT.NotAuthenticated ePiecemeal) {
                     requestPassword();
                 }
@@ -99,24 +89,6 @@ public class MainActivity extends Activity implements PasswordFragment.OnPasswor
 
     public void onPasswordInput(byte[] password) {
         mPassword = password;
-    }
-
-    public void launchOverview() {
-        Intent intent = new Intent(this, OverviewActivity.class);
-        intent.putExtra(UID, mUID);
-
-        if (mPassword != null) intent.putExtra(PASSWORD, mPassword);
-
-        if (mAllPages != null) {
-            intent.putExtra(ALL_PAGES, mAllPages);
-        } else {
-            if (mPage02 != null) intent.putExtra(PAGE_02, mPage02);
-            if (mPage03 != null) intent.putExtra(PAGE_03, mPage03);
-            if (mPageE2 != null) intent.putExtra(PAGE_E2, mPageE2);
-            if (mPageE3 != null) intent.putExtra(PAGE_E3, mPageE3);
-        }
-
-        startActivity(intent);
     }
 
     private void showAlert(String message) {
