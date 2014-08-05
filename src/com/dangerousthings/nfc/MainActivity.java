@@ -28,7 +28,9 @@ public class MainActivity extends Activity implements PasswordFragment.OnPasswor
         super.onResume();
 
         PendingIntent intent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-        NfcAdapter.getDefaultAdapter(this).enableForegroundDispatch(this, intent, null, null);
+        
+        NfcAdapter adapter = NfcAdapter.getDefaultAdapter(this);
+        if (adapter != null) adapter.enableForegroundDispatch(this, intent, null, null);
     }
 
     public void onNewIntent(Intent intent) {
