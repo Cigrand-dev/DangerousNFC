@@ -9,11 +9,22 @@ import android.text.InputFilter;
 import android.text.Spanned;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
 public class PasswordFragment extends DialogFragment {
+    public static PasswordFragment newInstance(byte[] preset) {
+        PasswordFragment fragment = new PasswordFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putByteArray("preset", preset);
+        fragment.setArguments(bundle);
+
+        return fragment;
+    }
+
     public interface OnPasswordListener {
         public void onPasswordInput(byte[] password);
     }
@@ -41,14 +52,18 @@ public class PasswordFragment extends DialogFragment {
         final EditText password = (EditText) view.findViewById(R.id.password);
         password.setFilters(new InputFilter[]{ new BytesLengthFilter(Charset.forName("UTF-8"), 4) });
 
+        String preset = new String(getArguments().getByteArray("preset"), Charset.forName("UTF-8"));
+        password.setText(preset.replaceAll("\0", ""), TextView.BufferType.EDITABLE);
+        password.setSelection(password.getText().length());
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view)
                .setMessage("Password?")
                .setNegativeButton("Cancel", null)
                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                    public void onClick(DialogInterface dialog, int id) {
-                       byte[] passwordValue = Arrays.copyOf(password.getText().toString().getBytes(Charset.forName("UTF-8")), 4);
-                       ((OnPasswordListener) getActivity()).onPasswordInput(passwordValue);
+                       byte[] passwordValue = password.getText().toString().replaceAll("\0", "").getBytes(Charset.forName("UTF-8"));
+                       ((OnPasswordListener) getActivity()).onPasswordInput(Arrays.copyOf(passwordValue, 4));
                    }
                });
         return builder.create();
