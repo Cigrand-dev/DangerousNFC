@@ -15,11 +15,15 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 
 public class PasswordFragment extends DialogFragment {
-    public static PasswordFragment newInstance(byte[] preset) {
+    public static PasswordFragment newInstance(byte[] preset_bytes) {
         PasswordFragment fragment = new PasswordFragment();
 
+        String preset_string;
+        if (preset_bytes == null) preset_string = "";
+        else preset_string = new String(preset_bytes, Charset.forName("UTF-8"));
+
         Bundle bundle = new Bundle();
-        bundle.putByteArray("preset", preset);
+        bundle.putString("preset_password", preset_string);
         fragment.setArguments(bundle);
 
         return fragment;
@@ -52,8 +56,8 @@ public class PasswordFragment extends DialogFragment {
         final EditText password = (EditText) view.findViewById(R.id.password);
         password.setFilters(new InputFilter[]{ new BytesLengthFilter(Charset.forName("UTF-8"), 4) });
 
-        String preset = new String(getArguments().getByteArray("preset"), Charset.forName("UTF-8"));
-        password.setText(preset.replaceAll("\0", ""), TextView.BufferType.EDITABLE);
+        String preset_password = getArguments().getString("preset_password");
+        password.setText(preset_password, TextView.BufferType.EDITABLE);
         password.setSelection(password.getText().length());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -62,8 +66,13 @@ public class PasswordFragment extends DialogFragment {
                .setNegativeButton("Cancel", null)
                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                    public void onClick(DialogInterface dialog, int id) {
-                       byte[] passwordValue = password.getText().toString().replaceAll("\0", "").getBytes(Charset.forName("UTF-8"));
-                       ((OnPasswordListener) getActivity()).onPasswordInput(Arrays.copyOf(passwordValue, 4));
+                       byte[] password_bytes;
+
+                       String password_string = password.getText().toString();
+                       if (password_string.length() == 0) password_bytes = null;
+                       else password_bytes = password_string.getBytes(Charset.forName("UTF-8"));
+
+                       ((OnPasswordListener) getActivity()).onPasswordInput(password_bytes);
                    }
                });
         return builder.create();

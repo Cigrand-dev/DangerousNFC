@@ -14,7 +14,7 @@ import java.util.Arrays;
 
 public class MainActivity extends Activity implements PasswordFragment.OnPasswordListener
 {
-    byte[] mPassword = new byte[4];
+    byte[] mPassword = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,7 +33,7 @@ public class MainActivity extends Activity implements PasswordFragment.OnPasswor
     }
 
     public void onNewIntent(Intent intent) {
-        if (Arrays.equals(mPassword, new byte[4])) {
+        if (mPassword != null) {
             Tag intentTag = (Tag) intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
             try {
@@ -65,6 +65,10 @@ public class MainActivity extends Activity implements PasswordFragment.OnPasswor
 
     public void onPasswordInput(byte[] password) {
         mPassword = password;
+    }
+
+    public byte[] getPasswordBytes() {
+        return mPassword;
     }
 
     private void showAlert(String message) {
