@@ -1,5 +1,8 @@
 package com.dangerousthings.nfc;
 
+import com.dangerousthings.nearfield.tech.Ntag216;
+import com.dangerousthings.nearfield.utils.OtpUtils;
+
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -14,6 +17,12 @@ import java.util.Arrays;
 
 public class MainActivity extends Activity implements PasswordFragment.OnPasswordListener
 {
+    static byte NEW_AUTH0 = (byte)0xE2;
+    static byte[] NEW_CC = new byte[] { (byte)0xE1, (byte)0x12, (byte)0x6D, (byte)0x00 };
+    static byte[] NEW_PACK = new byte[] { (byte)0x44, (byte)0x54 };
+    static byte[] NEW_STATIC_LOCK_BYTES = new byte[] { (byte)0x0F, (byte)0x00 };
+    static byte[] NEW_DYNAMIC_LOCK_BYTES = new byte[] { (byte)0x00, (byte)0x00, (byte)0x7F };
+
     byte[] mPassword = null;
 
     @Override
@@ -34,25 +43,40 @@ public class MainActivity extends Activity implements PasswordFragment.OnPasswor
 
     public void onNewIntent(Intent intent) {
         if (mPassword != null) {
+            byte[] password = new byte[4];
+            System.arraycopy(mPassword, 0, password, 0, mPassword.length);
+
             Tag intentTag = (Tag) intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
             try {
-                xNT tag = new xNT(intentTag);
+                Ntag216 tag = Ntag216.get(intentTag);
                 tag.connect();
-                tag.checkVersion();
 
-                byte[] page02 = tag.read((byte) 0x02);
-                byte[] page03 = tag.read((byte) 0x03);
-                byte[] pageE2 = tag.read((byte) 0xE2);
-                byte[] pageE3 = tag.read((byte) 0xE3);
-            } catch (xNT.BadUIDLength e) {
-                showAlert("Error: Tag Not Supported");
-            } catch (xNT.WrongTagTechnologies e) {
-                showAlert("Error: Tag Not Supported");
-            } catch (xNT.BadTagVersion e) {
-                showAlert("Error: Tag Not Supported");
-            } catch (xNT.NotAuthenticated e) {
-                showAlert("Error: Password Already Set");
+                boolean badVersion = !Arrays.equals(Ntag216.VERSION, tag.getVersion());
+                if (badVersion) throw new IOException("Error: Unsupported Tag");
+
+                // tag.pwdAuth(password);
+
+                boolean alteredStaticLockBytes = !Arrays.equals(Ntag216.DEFAULT_STATIC_LOCK_BYTES, tag.getStaticLockBytes());
+                boolean alteredDynamicLockBytes = !Arrays.equals(Ntag216.DEFAULT_DYNAMIC_LOCK_BYTES, tag.getDynamicLockBytes());
+                if (alteredStaticLockBytes || alteredDynamicLockBytes) throw new IOException("Error: Lock Bits Already Altered");
+
+                byte[] currentCC = tag.getCC();
+                if (OtpUtils.isWritePossible(currentCC, NEW_CC)) {
+                    tag.setCC(NEW_CC);
+                } else if ((currentCC[0] != (byte)0xE1) || (currentCC[1] != (byte)0x11) ||
+                           (currentCC[2] != (byte)0x6D) || (currentCC[3] != (byte)0x00)) {
+                    throw new IOException("Error: Bad Capability Container");
+                }
+
+                tag.setStaticLockBytes(NEW_STATIC_LOCK_BYTES);
+                tag.setDynamicLockBytes(NEW_DYNAMIC_LOCK_BYTES);
+
+                tag.setPass(password);
+                tag.setPack(NEW_PACK);
+                tag.setAuth0(NEW_AUTH0);
+
+                showAlert("Success! Tag has been updated! :)");
             } catch (IOException e) {
                 showAlert(e.getMessage());
             }
@@ -64,11 +88,25 @@ public class MainActivity extends Activity implements PasswordFragment.OnPasswor
     }
 
     public void onPasswordInput(byte[] password) {
-        mPassword = password;
+        setPasswordBytes(password);
     }
 
     public byte[] getPasswordBytes() {
         return mPassword;
+    }
+
+    public void setPasswordBytes(byte[] passwordBytes) {
+        mPassword = passwordBytes;
+
+        runOnUiThread(new Runnable() {
+            public void run() {
+                if (mPassword != null) {
+                    findViewById(R.id.scan_tag_now).setVisibility(View.VISIBLE);
+                } else {
+                    findViewById(R.id.scan_tag_now).setVisibility(View.INVISIBLE);
+                }
+            }
+        });
     }
 
     private void showAlert(String message) {
