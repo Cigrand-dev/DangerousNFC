@@ -142,13 +142,17 @@ public class MainActivity extends Activity implements PasswordFragment.OnPasswor
         });
     }
 
-    private void showAlert(String message) {
-        new AlertDialog.Builder(this)
-            .setMessage(message)
-            .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.dismiss();
-                }
-            }).create().show();
+    private void showAlert(final String message) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                new AlertDialog.Builder(MainActivity.this)
+                    .setMessage(message)
+                    .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    }).create().show();
+            }
+        });
     }
 }
