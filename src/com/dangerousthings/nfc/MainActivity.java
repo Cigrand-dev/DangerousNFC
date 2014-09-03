@@ -8,6 +8,7 @@ import com.dangerousthings.nearfield.utils.OtpUtils;
 
 import android.app.Activity;
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
@@ -144,7 +145,10 @@ public class MainActivity extends Activity implements PasswordFragment.OnPasswor
     private void showAlert(String message) {
         new AlertDialog.Builder(this)
             .setMessage(message)
-            .setPositiveButton("Okay", null)
-            .show();
+            .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.dismiss();
+                }
+            }).create().show();
     }
 }

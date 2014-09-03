@@ -63,16 +63,20 @@ public class PasswordFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view)
                .setMessage("Password?")
-               .setNegativeButton("Cancel", null)
-               .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+               .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                   public void onClick(DialogInterface dialog, int id) {
+                       dialog.dismiss();
+                   }
+               }).setPositiveButton("Save", new DialogInterface.OnClickListener() {
                    public void onClick(DialogInterface dialog, int id) {
                        byte[] password_bytes;
-
                        String password_string = password.getText().toString();
                        if (password_string.length() == 0) password_bytes = null;
                        else password_bytes = password_string.getBytes(Charset.forName("UTF-8"));
 
                        ((OnPasswordListener) getActivity()).onPasswordInput(password_bytes);
+
+                       dialog.dismiss();
                    }
                });
         return builder.create();
