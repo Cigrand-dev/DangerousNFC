@@ -40,7 +40,7 @@ public class Ntag216Test extends ActivityInstrumentationTestCase2<MainActivity> 
         MoreAsserts.assertEquals(tag.getCC(), MainActivity.NEW_NTAG216_CC);
         MoreAsserts.assertEquals(tag.getStaticLockBytes(), MainActivity.NEW_STATIC_LOCK_BYTES);
         MoreAsserts.assertEquals(tag.getDynamicLockBytes(), MainActivity.NEW_NTAG216_DYNAMIC_LOCK_BYTES);
-        MoreAsserts.assertEquals(tag.getPass(), test_password_bytes);
+        MoreAsserts.assertEquals(tag.getPwd(), test_password_bytes);
         MoreAsserts.assertEquals(tag.getPack(), MainActivity.NEW_PACK);
         assertEquals(tag.getAuth0(), MainActivity.NEW_NTAG216_AUTH0);
     }

@@ -105,7 +105,7 @@ public class MainActivity extends Activity implements PasswordFragment.OnPasswor
                 tag.setStaticLockBytes(NEW_STATIC_LOCK_BYTES);
                 tag.setDynamicLockBytes(newDynamicLockBytes);
 
-                tag.setPass(password);
+                tag.setPwd(password);
                 tag.setPack(NEW_PACK);
                 tag.setAuth0(newAuth0);
 
