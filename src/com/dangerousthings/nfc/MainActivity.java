@@ -99,7 +99,7 @@ public class MainActivity extends Activity implements PasswordFragment.OnPasswor
                     tag.setCC(newCC);
                 } else if ((currentCC[0] != newCC[0]) || (currentCC[1] != (byte)0x11) ||
                            (currentCC[2] != newCC[2]) || (currentCC[3] != newCC[3])) {
-                    throw new IOException("Error: Bad Capability Container");
+                    throw new IOException("Error: Bad Capability Container\n" + HexUtils.bytesToHex(currentCC));
                 }
 
                 tag.setStaticLockBytes(NEW_STATIC_LOCK_BYTES);
