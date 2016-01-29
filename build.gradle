@@ -26,17 +26,9 @@ android {
         pickFirst 'META-INF/NOTICE.txt'
     }
 
-    signingConfigs {
-        release {
-            storeFile file("dnfc.keystore")
-            keyAlias "dnfc"
-        }
-    }
-
     buildTypes {
         release {
             runProguard false
-            signingConfig signingConfigs.release
             proguardFile getDefaultProguardFile('proguard-android.txt')
         }
     }
@@ -60,25 +52,5 @@ android {
             java.srcDirs = ['src']
             manifest.srcFile 'AndroidManifest.xml'
         }
-    }
-}
-
-def promptForPassword(msg) {
-    return new String(System.console().readPassword("\r\n    [input] $msg"))
-}
-
-task promptForReleaseKeyPassword << {
-    if (!android.signingConfigs.release.storePassword) {
-        android.signingConfigs.release.storePassword = promptForPassword("Please enter keystore password (store:$android.signingConfigs.release.storeFile):")
-    }
-
-    if (!android.signingConfigs.release.keyPassword) {
-        android.signingConfigs.release.keyPassword = promptForPassword("Please enter password for alias '$android.signingConfigs.release.keyAlias':")
-    }
-}
-
-tasks.whenTaskAdded { task -> 
-    if (task.name == 'validateReleaseSigning') {
-        task.dependsOn promptForReleaseKeyPassword
     }
 }
