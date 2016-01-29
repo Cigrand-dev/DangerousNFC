@@ -4,11 +4,9 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.12.2'
-        classpath 'org.robolectric:robolectric-gradle-plugin:0.11.+'
     }
 }
 apply plugin: 'android'
-apply plugin: 'robolectric'
 
 repositories {
     mavenCentral()
@@ -53,10 +51,6 @@ android {
     }
 
     sourceSets {
-        defaultConfig {
-            testApplicationId 'com.dangerousthings.nfc.tests'
-        }
-
         main {
             assets.srcDirs = ['assets']
             res.srcDirs = ['res']
@@ -66,9 +60,6 @@ android {
             java.srcDirs = ['src']
             manifest.srcFile 'AndroidManifest.xml'
         }
-
-        instrumentTest.setRoot('tests')
-        instrumentTest.java.srcDirs = ['tests/src']
     }
 }
 
