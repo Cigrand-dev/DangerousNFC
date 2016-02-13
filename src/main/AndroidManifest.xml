@@ -22,5 +22,9 @@
               <data android:scheme="http" android:host="nfc.dangerousthings.com" android:pathPrefix="/payload/" />
             </intent-filter>
         </activity>
+        <meta-data android:name="xposedmodule"
+                   android:value="true" />
+        <meta-data android:name="xposedminversion"
+                   android:value="80" />
     </application>
 </manifest>
